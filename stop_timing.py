@@ -1,6 +1,14 @@
 from TogglPy import Toggl
 import argparse
 from secrets import api_token
+import subprocess
+
+
+def apple_alert(title, msg):
+    applescript = '''
+        osascript -e 'display notification "{}" with title "{}"'
+    '''.format(msg, title)
+    subprocess.call(applescript, shell=True)
 
 
 def main():
@@ -13,16 +21,15 @@ def main():
     toggl = Toggl()
     toggl.setAPIKey(api_token)
 
-    currentTimer = toggl.currentRunningTimeEntry()
-    print(currentTimer)
-
     if args.stop:
-        res = toggl.stopTimeEntry(currentTimer['data']['id'])
-        print(res)
+        currentTimer = toggl.currentRunningTimeEntry()['data']
+        if currentTimer:
+            res = toggl.stopTimeEntry(currentTimer['id'])['data']
 
-    # response = toggl.request("https://www.toggl.com/api/v8/clients")
-    # for client in response:
-    #     print client['name']
+            apple_alert('Toggl', 'Stopped timer `{}`'.format(res['description']))
+            print(res)
+        else:
+            apple_alert('Toggl', 'No timer to stop')
 
 
 if __name__ == '__main__':
