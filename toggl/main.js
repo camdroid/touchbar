@@ -33,12 +33,17 @@ function stopCurrentEntry() {
     }
 }
 
+const toggl_start_button = new TouchBarButton({
+    label: 'Start Toggl',
+    click: () => {
+        console.log('Starting timer, for what?');
+    },
+});
 
-getCurrEntry();
 const toggl_button = new TouchBarButton({
     label: 'Stop Toggl!',
     click: () => {
-        getCurrEntry()
+        getCurrEntry();
         console.log('Running: '+running);
         console.log('Entry');
         console.log(current_entry);
@@ -57,7 +62,7 @@ const toggl_button = new TouchBarButton({
 
 })
 
-const touchBar = new TouchBar([toggl_button]);
+const touchBar = new TouchBar([toggl_button, toggl_start_button]);
 
 let window
 
