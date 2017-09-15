@@ -20,10 +20,10 @@ function getCurrEntry(callback) {
     callback(current_entry);
 }
 
-function stopCurrentEntry(current_entry) {
-    if(current_entry != null) {
+function stopEntry(entry) {
+    if(entry != null) {
         console.log('Stopping time entry');
-        toggl.stopTimeEntry(current_entry.id, function(err, obj) {
+        toggl.stopTimeEntry(entry.id, function(err, obj) {
                 if(err != null) {
                     console.log('couldn\'t stop entry');
                     console.log(err);
@@ -31,6 +31,8 @@ function stopCurrentEntry(current_entry) {
                     console.log('stopped entry');
                 }
             });
+    } else {
+        console.log('No time entry to stop.');
     }
 }
 
@@ -47,7 +49,7 @@ const toggl_start_button = new TouchBarButton({
 const toggl_button = new TouchBarButton({
     label: 'Stop Toggl!',
     click: () => {
-        getCurrEntry(stopCurrentEntry);
+        getCurrEntry(stopEntry);
     }
 });
 
