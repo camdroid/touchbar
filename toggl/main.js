@@ -7,7 +7,7 @@ const toggl = new TogglClient({apiToken: ''});
 current_entry = null;
 running = false;
 
-function getCurrEntry() {
+function getCurrEntry(callback) {
     toggl.getCurrentTimeEntry(function(err, timeEntry) {
         if(timeEntry) {
             current_entry = timeEntry;
@@ -16,10 +16,11 @@ function getCurrEntry() {
             running = false;
             current_entry = null;
         }
-    })
+    });
+    callback(current_entry);
 }
 
-function stopCurrentEntry() {
+function stopCurrentEntry(current_entry) {
     if(current_entry != null) {
         console.log('Stopping time entry');
         toggl.stopTimeEntry(current_entry.id, function(err, obj) {
@@ -36,31 +37,19 @@ function stopCurrentEntry() {
 const toggl_start_button = new TouchBarButton({
     label: 'Start Toggl',
     click: () => {
-        console.log('Starting timer, for what?');
+        console.log('Fetching list of most recently used timers');
+        toggl.getTimeEntries('2017-09-13', '2017-09-14', function(err, timeEntries) {
+            console.log(timeEntries);
+        });
     },
 });
 
 const toggl_button = new TouchBarButton({
     label: 'Stop Toggl!',
     click: () => {
-        getCurrEntry();
-        console.log('Running: '+running);
-        console.log('Entry');
-        console.log(current_entry);
-        if(current_entry != null) {
-            console.log('Stopping time entry');
-            toggl.stopTimeEntry(current_entry.id, function(err, obj) {
-                if(err != null) {
-                    console.log('couldn\'t stop entry');
-                    console.log(err);
-                } else {
-                    console.log('stopped entry');
-                }
-            });
-        }
+        getCurrEntry(stopCurrentEntry);
     }
-
-})
+});
 
 const touchBar = new TouchBar([toggl_button, toggl_start_button]);
 
