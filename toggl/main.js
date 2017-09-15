@@ -56,7 +56,14 @@ function getTitles(start_date, end_date, callback) {
 }
 
 function setTouchBarButtons(buttons) {
-    console.log('Buttons' + buttons);
+    console.log('Keys: ' + Object.keys(buttons[0]));
+    button_titles = [];
+    buttons.forEach(function(button) {
+        if(!button_titles.includes(button.label)) {
+            button_titles.push(button.label);
+        }
+    });
+    console.log('Buttons: ' + button_titles);
     const touchBar = new TouchBar(buttons);
     window.setTouchBar(touchBar);
 }
@@ -64,8 +71,8 @@ function setTouchBarButtons(buttons) {
 const toggl_start_button = new TouchBarButton({
     label: 'Start Toggl',
     click: () => {
-        start_date = new Date('2017-09-10');
-        end_date = new Date('2017-09-13');
+        start_date = new Date('2017-09-14');
+        end_date = new Date('2017-09-16');
 
         console.log('Fetching list of most recently used timers');
         getTitles(start_date, end_date, setTouchBarButtons);
