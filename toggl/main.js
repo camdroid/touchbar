@@ -40,27 +40,24 @@ function stopEntry(entry) {
     }
 }
 
+function duplicateTimeEntry(oldEntry) {
+    return {
+        description: oldEntry['description'],
+        wid: oldEntry['wid'],
+        uid: oldEntry['uid'],
+        pid: oldEntry['pid']
+    }
+}
+
 function getTitles(start_date, end_date, callback) {
     buttons = [];
     toggl.getTimeEntries(start_date, end_date, function(err, timeEntries) {
-        console.log('Recent entries: ');
         timeEntries.forEach(function(entry) {
-            console.log('Entry: ' + entry.id + ': ' + entry.description);
-            button_title = entry['description'].slice(0, 7);
             button = new TouchBarButton({
-                label: button_title,
+                label: entry['description'].slice(0, 7),
                 click: () => {
-                    toggl.startTimeEntry({
-                        description: entry['description'],
-                        wid: entry['wid'],
-                        uid: entry['uid'],
-                        pid: entry['pid']
-                    }, function(err, new_entry) {
-                        if(err == null) {
-                            console.log('Error while restarting entry');
-                            console.log(err);
-                        }
-                        console.log('Restarted entry: ' + new_entry.description + ':' + err);
+                    toggl.startTimeEntry(duplicateTimeEntry(entry), function(err, new_entry) {
+                        console.log('Restarted entry: ' + new_entry.description);
                     });
                 },
             });
