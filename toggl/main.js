@@ -39,10 +39,23 @@ function stopEntry(entry) {
 const toggl_start_button = new TouchBarButton({
     label: 'Start Toggl',
     click: () => {
+        start_date = new Date('2017-09-10');
+        end_date = new Date('2017-09-13');
+
+        console.log('Start date: ' + start_date);
+        console.log('End date: ' + end_date);
         console.log('Fetching list of most recently used timers');
-        toggl.getTimeEntries('2017-09-13', '2017-09-14', function(err, timeEntries) {
-            console.log(timeEntries);
+        toggl.getTimeEntries(start_date, end_date, function(err, timeEntries) {
+            /*
+             *console.log(timeEntries);
+             */
+            titles = [];
+            timeEntries.forEach(function(entry) {
+                titles.push(entry['description'].slice(0, 7));
+            });
+            console.log(titles);
         });
+        console.log('End');
     },
 });
 
