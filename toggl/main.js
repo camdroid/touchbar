@@ -7,6 +7,8 @@ const toggl = new TogglClient({apiToken: ''});
 current_entry = null;
 running = false;
 
+let window
+
 function getCurrEntry(callback) {
     toggl.getCurrentTimeEntry(function(err, timeEntry) {
         if(timeEntry) {
@@ -17,6 +19,8 @@ function getCurrEntry(callback) {
             current_entry = null;
         }
     });
+
+    console.log('Current entry: ' + current_entry);
     callback(current_entry);
 }
 
@@ -36,26 +40,35 @@ function stopEntry(entry) {
     }
 }
 
+function getTitles(start_date, end_date, callback) {
+    buttons = [];
+    toggl.getTimeEntries(start_date, end_date, function(err, timeEntries) {
+        timeEntries.forEach(function(entry) {
+            console.log('Entry: ' + entry);
+            button_title = entry['description'].slice(0, 7);
+            button = new TouchBarButton({
+                label: button_title
+            });
+            buttons.push(button);
+        });
+        callback(buttons);
+    });
+}
+
+function setTouchBarButtons(buttons) {
+    console.log('Buttons' + buttons);
+    const touchBar = new TouchBar(buttons);
+    window.setTouchBar(touchBar);
+}
+
 const toggl_start_button = new TouchBarButton({
     label: 'Start Toggl',
     click: () => {
         start_date = new Date('2017-09-10');
         end_date = new Date('2017-09-13');
 
-        console.log('Start date: ' + start_date);
-        console.log('End date: ' + end_date);
         console.log('Fetching list of most recently used timers');
-        toggl.getTimeEntries(start_date, end_date, function(err, timeEntries) {
-            /*
-             *console.log(timeEntries);
-             */
-            titles = [];
-            timeEntries.forEach(function(entry) {
-                titles.push(entry['description'].slice(0, 7));
-            });
-            console.log(titles);
-        });
-        console.log('End');
+        getTitles(start_date, end_date, setTouchBarButtons);
     },
 });
 
@@ -67,8 +80,6 @@ const toggl_button = new TouchBarButton({
 });
 
 const touchBar = new TouchBar([toggl_button, toggl_start_button]);
-
-let window
 
 app.once('ready', () => {
   window = new BrowserWindow({
