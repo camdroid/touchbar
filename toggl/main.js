@@ -51,10 +51,15 @@ function duplicateTimeEntry(oldEntry) {
 
 function getTitles(start_date, end_date, callback) {
     buttons = [];
+    buttonLabels = [];
     toggl.getTimeEntries(start_date, end_date, function(err, timeEntries) {
         timeEntries.forEach(function(entry) {
+            label = entry['description'].slice(0, 7);
+            if(buttonLabels.includes(label)) {
+                return;
+            }
             button = new TouchBarButton({
-                label: entry['description'].slice(0, 7),
+                label: label,
                 click: () => {
                     toggl.startTimeEntry(duplicateTimeEntry(entry), function(err, new_entry) {
                         console.log('Restarted entry: ' + new_entry.description);
@@ -62,6 +67,7 @@ function getTitles(start_date, end_date, callback) {
                 },
             });
             buttons.push(button);
+            buttonLabels.push(button.label);
         });
         callback(buttons);
     });
