@@ -101,7 +101,7 @@ const toggl_button = new TouchBarButton({
     }
 });
 
-const touchBar = new TouchBar([toggl_button, toggl_start_button]);
+const touchBar = new TouchBar([toggl_start_button, toggl_button]);
 
 app.once('ready', () => {
   window = new BrowserWindow({
