@@ -89,8 +89,9 @@ function setTouchBarButtons(buttons) {
 const toggl_start_button = new TouchBarButton({
     label: 'Start Toggl',
     click: () => {
-        start_date = new Date('2017-09-14');
-        end_date = new Date('2017-09-16');
+        end_date = new Date();
+        start_date = new Date(end_date.getFullYear(), end_date.getMonth(),
+                              end_date.getDay()-1);
 
         console.log('Fetching list of most recently used timers');
         getTitles(start_date, end_date, setTouchBarButtons);
